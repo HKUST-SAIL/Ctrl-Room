@@ -6,7 +6,7 @@ import json
 import numpy as np
 import argparse
 
-from improved_diffusion.clip_util import FrozenCLIPEmbedder
+from src.diffu_layout.improved_diffusion.clip_util import FrozenCLIPEmbedder
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="preprocess gpt4 caption for each room in structured3d")

@@ -8,6 +8,7 @@ import gc
 import glob
 import re
 from typing import Tuple, Union
+import shutil
 
 import torch
 from torchvision import transforms
@@ -16,8 +17,8 @@ from PIL import Image
 import cv2
 import open3d as o3d
 
-from panoformer.network.model import Panoformer as PanoBiT
-from egformer.egformer import EGDepthModel
+from src.pano_ctrlnet.panoformer.network.model import Panoformer as PanoBiT
+from src.pano_ctrlnet.egformer.egformer import EGDepthModel
 
 
 def get_rank():
@@ -72,7 +73,7 @@ def load_module_weights(
 
 # load panoformer model
 def load_depth_estimator_model(device: str = 'cuda'):
-    load_weights_dir = '../panoformer/ckpts/mp3d_weights'
+    load_weights_dir = '../ckpts/panoformer_mp3d_weights'
     # load panoformer model
     panoformer_model = PanoBiT()
     panoformer_model.to(device)
@@ -91,7 +92,7 @@ def load_depth_estimator_model(device: str = 'cuda'):
 
 # load egformer model
 def load_depth_estimator_egformer_model(device: str = 'cuda'):
-    model_path = '../egformer/ckpts/EGformer_pretrained.pkl'
+    model_path = '../ckpts/EGformer_pretrained.pkl'
     print("loading model from folder {}".format(model_path))
     
     egformer_model = EGDepthModel(hybrid=False)
@@ -228,7 +229,6 @@ def main(args):
         for f in os.listdir(args.input_folder)
         if os.path.isdir(os.path.join(args.input_folder, f))
     ]
-    # input_folders_lst = sorted(input_folders_lst, key=lambda x: int(x.split('/')[-1]))
 
     gc.collect()
     torch.cuda.empty_cache()
@@ -268,10 +268,6 @@ def main(args):
         img = cv2.imread(img_path, cv2.IMREAD_UNCHANGED)
         # convert uint16 to uint8
         img = cv2.convertScaleAbs(img, alpha=(255.0/65535.0))
-        # normalized_img = cv2.normalize(img, None, 0, 255, cv2.NORM_MINMAX, cv2.CV_8U)
-        # normalized_img = cv2.normalize(img, None, 0, 1.0, cv2.NORM_MINMAX, cv2.CV_64F)
-        # print(f'normalized image min: {normalized_img.min()}, max: {normalized_img.max()}, dtype: {normalized_img.dtype}')
-        # pano_img = cv2.resize(normalized_img, (1024,512), interpolation=cv2.INTER_AREA)
         img_path = os.path.join(img_folder, img_name[:-4] + '_pano.png')
         pano_img = cv2.resize(img, (1024,512), interpolation=cv2.INTER_AREA)
         cv2.imwrite(img_path, pano_img[:,:,:3])
@@ -281,7 +277,6 @@ def main(args):
         sr_pano_img = cv2.resize(img, (2048,1024), interpolation=cv2.INTER_AREA)
         cv2.imwrite(img_path, sr_pano_img[:,:,:3])
 
-    import shutil
     def rename_panorama(img_folder: str):
         pano_img_path = glob.glob(os.path.join(img_folder, 'pano.png'))
         if len(pano_img_path) == 0:
@@ -304,8 +299,8 @@ def main(args):
             resize_panorama(img_folder)
         elif is_text2light_pano:
             resize_openexr_panorama(img_folder)
-        # elif is_mvdiffusion_pano:
-        #     rename_panorama(img_folder)
+        elif is_mvdiffusion_pano:
+            rename_panorama(img_folder)
         img_path = glob.glob(os.path.join(img_folder, '*_pano.png'))
         if len(img_path) == 0:
             continue
@@ -335,7 +330,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--input_folder',
                         type=str,
-                        default='/home/fangchuan/codes/Structured3D/sample_results/openai-2023-09-08-21-45-44-129369/livingroom')
+                        default='sample_results/livingroom')
     parser.add_argument('--poisson_exe_path',
                         type=str,
                         default='/app/libs/PoissonRecon/Bin/Linux/PoissonRecon')

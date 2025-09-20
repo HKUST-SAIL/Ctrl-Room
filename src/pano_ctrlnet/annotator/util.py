@@ -8,7 +8,7 @@ import os
 annotator_ckpts_path = os.path.join(os.path.dirname(__file__), 'ckpts')
 
 
-def HWC3(x):
+def HWC3(x: np.ndarray):
     assert x.dtype == np.uint8
     if x.ndim == 2:
         x = x[:, :, None]
@@ -27,7 +27,7 @@ def HWC3(x):
         return y
 
 
-def resize_image(input_image, resolution):
+def resize_image(input_image: np.ndarray, resolution: int):
     H, W, C = input_image.shape
     H = float(H)
     W = float(W)

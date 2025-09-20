@@ -41,7 +41,7 @@ from dataset.gen_scene_text import get_scene_description
 
 from utils.equirect_projection import vis_objs3d, vis_floor_ceiling_simple
 from utils.utils import euler_angle_to_matrix, matrix_to_euler_angles
-from improved_diffusion.clip_util import FrozenCLIPEmbedder
+from src.diffu_layout.improved_diffusion.clip_util import FrozenCLIPEmbedder
 from dataset.threed_front.metadata import TDFRONT_COLOR_TO_ADEK_LABEL
 
 ALL_SCENE = ['train', 'val', 'test']

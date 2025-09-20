@@ -10,9 +10,9 @@ from share import *
 import torch
 import pytorch_lightning as pl
 from torch.utils.data import DataLoader
-from dataset.st3d_dataset import ST3DDataset
-from cldm.logger import ImageLogger
-from cldm.model import create_model, load_state_dict
+from src.pano_ctrlnet.dataset.st3d_dataset import ST3DDataset
+from src.pano_ctrlnet.cldm.logger import ImageLogger
+from src.pano_ctrlnet.cldm.model import create_model, load_state_dict
 
 def register_user_signals(trainer: pl.Trainer):
     ckptdir = trainer.checkpoint_callback.dirpath
@@ -45,8 +45,8 @@ only_mid_control = False
 
 
 # First use cpu to load models. Pytorch Lightning will automatically move it to GPUs.
-model_name = 'control_v11p_sd15_seg'
-model = create_model(f'../models/{model_name}.yaml').cpu()
+model_name = './src/pano_ctrlnet/models/control_v11p_sd15_seg.yaml'
+model = create_model(f'{model_name}').cpu()
 model.load_state_dict(load_state_dict('../ckpts/control_v11p_sd15_seg_40000.ckpt', location='cuda'), strict=False)
 # model.load_state_dict(load_state_dict(f'../ckpts/{model_name}.pth', location='cuda'), strict=False)
 model.learning_rate = learning_rate
@@ -59,7 +59,7 @@ b_rotate = True
 b_gamma = False
 use_ddp = True
 room_type_str = 'kitchen'
-dataset_path = '/mnt/nas_3dv/hdd1/datasets/datasets/Structured3D/20240219_text2pano/'
+dataset_path = '/path/to//'
 
 train_dataset = ST3DDataset(root_dir=dataset_path,
                            split='train',
@@ -110,4 +110,3 @@ register_user_signals(trainer)
 
 # zero train
 trainer.fit(model, train_dataloader)
-# trainer.fit(model, train_dataloader, test_dataloader)

@@ -18,8 +18,8 @@ import torch as th
 import torch.distributed as dist
 from PIL import Image
 
-from improved_diffusion import dist_util, logger
-from improved_diffusion.script_util import (
+from src.diffu_layout.improved_diffusion import dist_util, logger
+from src.diffu_layout.improved_diffusion.script_util import (
     NUM_CLASSES,
     model_and_diffusion_defaults,
     create_model_and_diffusion,
@@ -172,7 +172,6 @@ def main():
     args = create_argparser().parse_args()
 
     dist_util.setup_dist()
-    # log_dir = os.path.join(args.log_dir, datetime.datetime.now().strftime("openai-%Y-%m-%d-%H-%M-%S-%f"))
     log_dir = args.log_dir
     logger.configure(dir=log_dir, format_strs=['tensorboard', 'stdout', 'log', 'csv'])
 
@@ -281,54 +280,40 @@ def main():
             for i in range(args.num_samples):
                 f.write(f'{cond_text_prompt_lst[i]}\n')
 
-    # if dist.get_rank() == 0:
-    #     shape_str = "x".join([str(x) for x in samples_arr.shape])
-    #     out_path = os.path.join(sample_result_folder, f"samples_{shape_str}.npz")
-    #     logger.log(f"saving to {out_path}")
-    #     if args.b_class_cond:
-    #         np.savez(out_path, samples_arr, label_arr)
-    #     else:
-    #         np.savez(out_path, samples_arr)
-
-    # dist.barrier()
 
     # load sample results: BxNxChannel
     post_sample_arr = []
     for idx, scene_name in enumerate(scene_names_lst):
         scene_sample_result = samples_arr[idx]
-        print(f'scene_sample_result.shape: {scene_sample_result.shape}')
+        # print(f'scene_sample_result.shape: {scene_sample_result.shape}')
         # descale samples
         scene_sample_result = dataset.post_process(scene_sample_result)
         # print(f'scene_sample_result.shape: {scene_sample_result.shape}')
-        print(f'descaled scene_sample_result.shape: {scene_sample_result.shape}')
-        # scene_sample_label = args.room_type
-        # print(f'scene_sample_label: {scene_sample_label}')
+        # print(f'descaled scene_sample_result.shape: {scene_sample_result.shape}')
         post_sample_arr.append(scene_sample_result)
 
         if args.room_type == 'bedroom':
-            room_layout_size = np.array([3.64073229, 3.73553261, 2.81591231])  # bedroom
-            wall_max_num = ST3D_BEDROOM_QUAD_WALL_MAX_LEN
+            max_wall_num = ST3D_BEDROOM_QUAD_WALL_MAX_LEN
         elif args.room_type == 'livingroom':
-            room_layout_size = np.array([7.239328956952291, 7.6231320936720675, 2.857928654068745])  # livingroom
-            wall_max_num = ST3D_LIVINGROOM_QUAD_WALL_MAX_LEN
+            max_wall_num = ST3D_LIVINGROOM_QUAD_WALL_MAX_LEN
         elif args.room_type == 'kitchen':
-            wall_max_num = ST3D_BEDROOM_QUAD_WALL_MAX_LEN
+            max_wall_num = ST3D_BEDROOM_QUAD_WALL_MAX_LEN
         elif args.room_type == 'study':
-            wall_max_num = ST3D_STUDY_QUAD_WALL_MAX_LEN
+            max_wall_num = ST3D_STUDY_QUAD_WALL_MAX_LEN
         elif args.room_type == 'bathroom':
-            wall_max_num = ST3D_BATHROOM_QUAD_WALL_MAX_LEN
+            max_wall_num = ST3D_BATHROOM_QUAD_WALL_MAX_LEN
         else:
             raise NotImplementedError
         # quad walls
-        quad_wall_lst = scene_sample_result[:wall_max_num, :]
+        quad_wall_lst = scene_sample_result[:max_wall_num, :]
         # objects
-        obj_bbox_lst = scene_sample_result[wall_max_num:, :]
+        obj_bbox_lst = scene_sample_result[max_wall_num:, :]
 
         wall_dict_lst, obj_bbox_dict_lst = recover_quad_wall_layout_mesh(dataset_type='st3d',
                                                                          room_type=args.room_type,
                                                                          quad_wall_lst=quad_wall_lst,
-                                                                         object_bbox_lst=obj_bbox_lst,)
-                                                                        #  room_layout_bbox_size=room_layout_size)
+                                                                         object_bbox_lst=obj_bbox_lst,
+                                                                         )
 
         # save synthesis results as image
         out_img = np.zeros((512, 1024, 3), np.uint8)

@@ -41,7 +41,7 @@ ROOM_TYPE_DICT = {
     'undefined': 15
 }
 from dataset.gen_scene_text import get_scene_description
-from improved_diffusion.clip_util import FrozenCLIPEmbedder
+from src.diffu_layout.improved_diffusion.clip_util import FrozenCLIPEmbedder
 
 # ROOM_CLASS_LST = [10, 8, 3, 2, 0, 4, 5, 14, 13, 12, 7, 9, 11, 1, 6, 15]
 def get_room_type(room_type_v: int) -> str:

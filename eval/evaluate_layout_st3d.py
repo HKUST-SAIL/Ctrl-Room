@@ -20,7 +20,7 @@ from dataset.metadata import ST3D_BEDROOM_FURNITURE, \
                             ST3D_KITCHEN_FURNITURE, \
                             ST3D_BATHROOM_FURNITURE
 from dataset.metadata import COLOR_TO_ADEK_LABEL
-from improved_diffusion.losses import axis_aligned_bbox_overlaps_3d
+from src.diffu_layout.improved_diffusion.losses import axis_aligned_bbox_overlaps_3d
 from utils.utils import my_compute_box_3d
 from utils.utils import vis_scene_mesh
 import open3d as o3d

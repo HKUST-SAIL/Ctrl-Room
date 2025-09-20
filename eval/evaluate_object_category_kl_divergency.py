@@ -13,8 +13,8 @@ import torch.distributed as dist
 
 from tqdm import tqdm
 
-from improved_diffusion import logger, dist_util
-from improved_diffusion.script_util import (
+from src.diffu_layout.improved_diffusion import logger, dist_util
+from src.diffu_layout.improved_diffusion.script_util import (
     NUM_CLASSES,
     model_and_diffusion_defaults,
     create_model_and_diffusion,

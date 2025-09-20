@@ -693,7 +693,7 @@ def parse_wall_corners(scene_annos: dict, room_id: str, camera_position_filepath
     return quad_wall_dict, quad_wall_normalized_dict, room_layout_mesh
 
 
-from improved_diffusion.clip_util import FrozenCLIPEmbedder
+from src.diffu_layout.improved_diffusion.clip_util import FrozenCLIPEmbedder
 
 
 def save_visualization_and_mesh(

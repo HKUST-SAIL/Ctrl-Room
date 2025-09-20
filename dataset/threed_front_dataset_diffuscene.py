@@ -16,7 +16,7 @@ from .threed_front.metadata import THREED_FRONT_BEDROOM_WO_DOOR_WINDOW_WALL_FURN
     THREED_FRONT_BEDROOM_MAX_WALL_NUM, THREED_FRONT_LIVINGROOM_MAX_WALL_NUM
 from .text_utils import compute_rel_3dfront, get_article
 from num2words import num2words
-from improved_diffusion.clip_util import FrozenCLIPEmbedder
+from src.diffu_layout.improved_diffusion.clip_util import FrozenCLIPEmbedder
 
 # room types
 ROOM_TYPE_DICT = {

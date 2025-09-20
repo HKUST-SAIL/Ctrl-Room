@@ -23,20 +23,15 @@ import torch
 from typing import List, Dict, Any
 
 from pytorch_lightning import seed_everything
-from annotator.util import resize_image, HWC3
-from cldm.model import create_model, load_state_dict
-from cldm.ddim_hacked import DDIMSampler
+# from src.pano_ctrlnet.annotator.util import resize_image, HWC3
+from utils.utils import resize_image, HWC3
+from src.pano_ctrlnet.cldm.model import create_model, load_state_dict
+from src.pano_ctrlnet.cldm.ddim_hacked import DDIMSampler
 
-from annotator.oneformer.oneformer.data.datasets.register_ade20k_panoptic import ADE20K_150_CATEGORIES
-
-ade_labels = [label_dict["name"] for label_dict in ADE20K_150_CATEGORIES]
-# print(f'ade_labels: {ade_labels}')
-ade_colors = [list(label_dict["color"]) for label_dict in ADE20K_150_CATEGORIES]
 
 
 def load_pano_gen_model(ckpt_filepath:str, device: str = 'cuda'):
-    model_name = 'control_v11p_sd15_seg'
-    model = create_model(f'../models/{model_name}.yaml').cpu()
+    model = create_model('./src/pano_ctrlnet/models/control_v11p_sd15_seg.yaml').cpu()
     model.load_state_dict(load_state_dict(ckpt_filepath, location=device), strict=False)
     model = model.cuda()
     ddim_sampler = DDIMSampler(model)
@@ -48,7 +43,7 @@ samples_latent_lst = []
 samples_img_lst = []
 control_img_lst = []
 
-def process(model,
+def process(model: torch.nn.Module,
             ddim_sampler:DDIMSampler,
             input_image,
             prompt,
@@ -129,12 +124,8 @@ def process(model,
 
         # save samples
         print(f'x_samples.shape: {x_samples.shape}')
-        # for i in range(num_samples):
-        #     cv2.imwrite(os.path.join(current_sample_folder, f'{i}.png'), x_samples[i])
 
         results = [x_samples[i] for i in range(num_samples)]
-        # samples_img_lst.append(results[0])
-        # control_img_lst.append(control.cpu().numpy())
 
     return torch.from_numpy(control_img).to(model.device), results[0], samples[0],
 
@@ -165,7 +156,7 @@ def main(args):
 
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
-    # load control images
+    # load conditional images and text_promptds
     input_folders_lst = [
         f
         for f in os.listdir(args.input_folder)
@@ -242,10 +233,10 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--input_folder',
                         type=str,
-                        default='/home/fangchuan/codes/Structured3D/sample_results/openai-2023-09-08-21-45-44-129369/livingroom')
+                        default='sample_results/livingroom')
     parser.add_argument('--ckpt_filepath',
                         type=str,
-                        default='/home/fangchuan/codes/Structured3D/ckpts/control_v11p_sd15_seg_livingroom_fullres_40000.ckpt')
+                        default='ckpts/control_v11p_sd15_seg_livingroom_fullres_40000.ckpt')
     parser.add_argument('--num_samples', type=int, default=1)
     parser.add_argument('--image_resolution', type=int, default=512)
     parser.add_argument('--ddim_steps', type=int, default=200)
