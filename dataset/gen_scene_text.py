@@ -1,7 +1,6 @@
 import random
 import torch
 from num2words import num2words
-from nltk.tokenize import word_tokenize
 from .text_utils import compute_rel, get_article
 from collections import Counter, defaultdict
 

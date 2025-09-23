@@ -1,0 +1,27 @@
+--extra-index-url https://download.pytorch.org/whl/cu118
+torch==2.3.1+cu118
+torchvision==0.18.1+cu118
+xformers==0.0.27
+numpy
+open3d
+opencv-python-headless
+trimesh
+shapely
+jaxtyping==0.2.23
+tensorboard==2.12.0
+torchmetrics
+ipython
+numpy==1.26.4
+matplotlib
+Pillow
+accelerate
+transformers
+diffusers==0.32
+einops
+python-fcl
+num2words
+nltk
+blobfile
+mpi4py
+pytorch-lightning
+omegaconf

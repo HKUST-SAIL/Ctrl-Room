@@ -5,18 +5,14 @@ sys.path.append('.')
 sys.path.append('..')
 
 import random
-import datetime
 import argparse
 import glob
 import gc
 import json
-from share import *
-import config
+# from share import *
 
-import cv2
 from PIL import Image, ImageOps
 import einops
-import gradio as gr
 import numpy as np
 import torch
 
@@ -27,6 +23,8 @@ from pytorch_lightning import seed_everything
 from utils.utils import resize_image, HWC3
 from src.pano_ctrlnet.cldm.model import create_model, load_state_dict
 from src.pano_ctrlnet.cldm.ddim_hacked import DDIMSampler
+
+CONFIG_SAVE_MEMORY = False
 
 
 
@@ -77,7 +75,7 @@ def process(model: torch.nn.Module,
             seed = random.randint(0, 65535)
         seed_everything(seed)
 
-        if config.save_memory:
+        if CONFIG_SAVE_MEMORY:
             model.low_vram_shift(is_diffusing=False)
 
         cond = {
@@ -90,7 +88,7 @@ def process(model: torch.nn.Module,
         }
         shape = (4, H // 8, W // 8)
 
-        if config.save_memory:
+        if CONFIG_SAVE_MEMORY:
             model.low_vram_shift(is_diffusing=True)
 
         model.control_scales = [strength * (0.825**float(12 - i)) for i in range(13)] if guess_mode else ([strength] *
@@ -115,7 +113,7 @@ def process(model: torch.nn.Module,
                                                      unconditional_conditioning=un_cond,
                                                      use_consistent_sampling=True,)
 
-        if config.save_memory:
+        if CONFIG_SAVE_MEMORY:
             model.low_vram_shift(is_diffusing=False)
 
         x_samples = model.decode_first_stage(samples)
