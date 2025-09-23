@@ -1,20 +1,19 @@
-export CUDA_VISIBLE_DEVICES=0
-NUM_SAMPLES=-1
-OUTPUT_FOLDER=/mnt/nas_3dv/hdd1/fangchuan/eccv2024_ctrlroom/rebuttal/layout_eval_kitchen
+CUDA_VISIBLE_DEVICES=0
+NUM_SAMPLES=1
 
-eval "$(conda shell.bash hook)"
-conda activate structured3d
+# input data folder and output folder
+RAW_DATASET_ROOT=$1
+OUTPUT_FOLDER=$2
 
 # run layout sampling
-cd /mnt/nas_3dv/hdd1/fangchuan/HolisticDiffuScene/
 MODEL_FLAGS="--layout_channels 28 --layout_size 34 --num_channels 128 --num_res_blocks 3 --b_learn_sigma True --b_class_cond False --b_text_cond True --use_input_encoding True"
 DIFFUSION_FLAGS="--diffusion_steps 4000 --noise_schedule cosine  --timestep_respacing ddim200 --use_ddim True"
 ROOM_TYPE="kitchen"
-RAW_DATASET_PATH=/mnt/nas_3dv/hdd1/datasets/Structured3d/preprocessed/20240219_text2pano/test/kitchen/
-train_stats_file="/mnt/nas_3dv/hdd1/datasets/Structured3d/preprocessed/20240219_text2pano/train/kitchen/train_dataset_stats.json"
+RAW_DATASET_PATH=$RAW_DATASET_ROOT/test/kitchen/
+train_stats_file=$RAW_DATASET_ROOT/train/kitchen/train_dataset_stats.json
 
-LAYOUT_MODEL_PATH=log/ST3D_kitchen/20240223_normalized/ema_0.9999_400000.pt
-python scripts/st3d_room_layout_sample.py \
+LAYOUT_MODEL_PATH=ckpts/st3d_layout_kitchen.pt
+python src/st3d_room_layout_sample.py \
  --data_dir $RAW_DATASET_PATH \
  --model_path $LAYOUT_MODEL_PATH \
  $MODEL_FLAGS \
@@ -25,22 +24,17 @@ python scripts/st3d_room_layout_sample.py \
  --dataset_stats_file $train_stats_file 
 
 
-# # run panorama sampling
-conda activate control-v11
-PANO_INPUT_FOLDER=$OUTPUT_FOLDER/kitchen
-APP_MODEL_PATH="/mnt/nas_3dv/hdd1/fangchuan/Layout_Controlnet/ckpts/control_v11p_sd15_seg_kitchen_fullres_40000.ckpt"
-cd /mnt/nas_3dv/hdd1/fangchuan/Layout_Controlnet/scripts
-python st3d_panorama_sample.py --input_folder $PANO_INPUT_FOLDER --ckpt_filepath $APP_MODEL_PATH
+# run panorama sampling
+PANO_INPUT_FOLDER=$OUTPUT_FOLDER/$ROOM_TYPE
+PANOGEN_MODEL_PATH="ckpts/st3d_panorama_kitchen.ckpt"
+python src/st3d_panorama_sample.py \
+    --input_folder $PANO_INPUT_FOLDER \
+    --ckpt_filepath $PANOGEN_MODEL_PATH
 
-# # run super-resolution
-# python scripts/sr_val_ddpm_text_T_vqganfin_oldcanvas.py --config configs/stableSRNew/v2-finetune_text_T_512.yaml \
-#                                                         --ckpt ../stablesr_000117.ckpt \
-#                                                         --vqgan_ckpt ../vqgan_cfw_00011.ckpt \
-#                                                         --init-img input_img_1 \
-#                                                         --outdir output_img_1 \
-#                                                         --ddpm_steps 200 --dec_w 0.5 --colorfix_type adain
-# run panoramic reconstrcution
-python st3d_panorama_recons.py --input_folder $PANO_INPUT_FOLDER --use_egformer True
+# # run panoramic reconstrcution
+# python src/st3d_panorama_recons.py \
+#     --input_folder $PANO_INPUT_FOLDER \
+#     --use_egformer True
 
 
 

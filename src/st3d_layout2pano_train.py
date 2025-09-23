@@ -3,9 +3,6 @@ import sys
 sys.path.append('.')
 sys.path.append('..')
 
-from share import *
-
-# from mpi4py import MPI
 
 import torch
 import pytorch_lightning as pl
@@ -94,14 +91,11 @@ max_epochs = 1000
 min_steps = None
 max_steps = 1
 
-# from pytorch_lightning.strategies import DeepSpeedStrategy
-from pytorch_lightning.plugins import DeepSpeedPlugin
-strategy = 'ddp'
 trainer = pl.Trainer(accelerator='gpu',
                      gpus=2,
                      precision=32,
                      callbacks=[logger],
-                     strategy=strategy,
+                     strategy='ddp',
                      min_epochs=min_epochs,
                      max_epochs=max_epochs)
 

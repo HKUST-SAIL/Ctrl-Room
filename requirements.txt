@@ -25,3 +25,4 @@ blobfile
 mpi4py
 pytorch-lightning
 omegaconf
+open-clip-torch

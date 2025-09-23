@@ -8,6 +8,7 @@ vis_xtion/
 MASK_R_*/
 old/
 checkpoints/
+ckpts/
 VOCdevkit/
 *.py[cod]
 *$py.class
