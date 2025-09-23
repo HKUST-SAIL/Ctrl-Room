@@ -1,8 +1,9 @@
-# Ctrl-Room
-This repo contains code for Ctrl-Room.
+# [3DV 2025] Ctrl-Room
 
-This repository contains the official implementation of the paper: [Ctrl-Room: Controllable Text-to-3D Room Meshes Generation with Layout Constraints](https://arxiv.org/abs/2310.03602)
+<h4 align="center">
 
+
+Ctrl-Room: Controllable Text-to-3D Room Meshes Generation with Layout Constraints
 
 <hr style="margin-top: 0; margin-bottom: 8px;">
 <div align="center" style="margin-top: 0; padding-top: 0; line-height: 1;">
@@ -16,14 +17,15 @@ This repository contains the official implementation of the paper: [Ctrl-Room: C
     src="https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-CtrlRoom-ffc107?color=ffc107&logoColor=white" style="display: inline-block; vertical-align: middle;"/></a>
 </div>
 
+
 <p>**TL;DR**: Ctrl-Room is a generative framework to synthesize 3D Indoor Scene from text prompts. It includes two stages: the first stage create the 3D scene layout from a simple textual description of the room, the second stage generate a RGB panorama that is well-aligned to the 3D scene layout.</p>
 
 Feel free to contact me (cfangac@connect.ust.hk) or open an issue if you have any questions or suggestions.
 
 ## 📢 News
 
-- **2025-09-18**: Inference instructions are provided.
-- **2025-09-23**: The source code and pretrained models are released.
+- **2025-09-23**: Inference instructions are provided.
+- **2025-09-18**: The source code and pretrained models are released.
 
 
 ## 📋 TODO
