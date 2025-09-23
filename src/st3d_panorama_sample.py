@@ -27,7 +27,6 @@ from src.pano_ctrlnet.cldm.ddim_hacked import DDIMSampler
 CONFIG_SAVE_MEMORY = False
 
 
-
 def load_pano_gen_model(ckpt_filepath:str, device: str = 'cuda'):
     model = create_model('./src/pano_ctrlnet/models/control_v11p_sd15_seg.yaml').cpu()
     model.load_state_dict(load_state_dict(ckpt_filepath, location=device), strict=False)
