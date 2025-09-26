@@ -30,9 +30,9 @@ python src/st3d_panorama_sample.py \
     --input_folder $PANO_INPUT_FOLDER \
     --ckpt_filepath $PANOGEN_MODEL_PATH
 
-# # run panoramic reconstrcution
-# python src/st3d_panorama_recons.py \
-#     --input_folder $PANO_INPUT_FOLDER \
-#     --use_egformer True
+# run panoramic reconstrcution
+python src/st3d_panorama_recons.py \
+    --input_folder $PANO_INPUT_FOLDER \
+    --use_egformer True
 
 

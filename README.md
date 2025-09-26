@@ -33,7 +33,7 @@ Feel free to contact me (cfangac@connect.ust.hk) or open an issue if you have an
 - [x] Release source code and pretrained models.
 - [x] Release the dataset we use - [Structured3D]() with accurate bounding box annotation.
 - [x] Provide detailed inference instructions for panorama generation.
-- [ ] Provide detailed inference instructions for panorama-reconstruction.
+- [x] Provide detailed inference instructions for panorama-reconstruction.
 - [ ] Provide training instructions.
 
 
@@ -44,14 +44,23 @@ Tested with the following environment:
 * PyTorch 2.3.1
 * CUDA Version 11.8
 
+### 1. Clone this repo
 ```bash
 git clone https://github.com/fangchuan/Ctrl-Room.git
 cd Ctrl-Room
 
+```
+### 2. Install dependencies
+**To save you from the complex C++ libs dependencies between panorama_reconstruction modules, We strongly recommend using [settings/Dockerfile](settings/Dockerfile) to set up the environment.** You can build the docker image by the following command:
+```bash
+docker build -t ctrlroom:latest -f settings/Dockerfile .
+# run the docker image
+ docker run -it  --gpus all --name ctrlroom-test -v /path/to/your/data_and_code:/path/to/your/data_and_code ctrlroom:latest /bin/bash
+
+# [deprecated] conda env setup on your local machine
 conda create -n ctrlroom python=3.10 -y
 conda activate ctrlroom
-pip install -r requirements.txt
-
+pip install -r settings/requirements.txt
 ```
 
 
@@ -83,7 +92,7 @@ All pretrained models are available at [HuggingFace🤗](https://huggingface.co/
 # layout sampling of bedroom, living room, study ...
 bash scripts/run_st3d_room_layout_sample.sh /path/to/your/ctrlroom_dataset /output_layout_samples
 
-# Text-to-Layout-to-Panoramaa
+# Text-to-Layout-to-3D room meshes generation
 bash scripts/run_text2bedroom_pipeline.sh /path/to/your/ctrlroom_dataset /output_pano_samples
 
 bash scripts/run_text2livingroom_pipeline.sh /path/to/your/ctrlroom_dataset /output_pano_samples
