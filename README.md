@@ -93,15 +93,24 @@ All pretrained models are available at [HuggingFace🤗](https://huggingface.co/
 bash scripts/run_st3d_room_layout_sample.sh /path/to/your/ctrlroom_dataset /output_layout_samples
 
 # Text-to-Layout-to-3D room meshes generation
-bash scripts/run_text2bedroom_pipeline.sh /path/to/your/ctrlroom_dataset /output_pano_samples
+bash scripts/run_text2bedroom_pipeline.sh /path/to/your/ctrlroom_dataset /output_samples
 
-bash scripts/run_text2livingroom_pipeline.sh /path/to/your/ctrlroom_dataset /output_pano_samples
+bash scripts/run_text2livingroom_pipeline.sh /path/to/your/ctrlroom_dataset /output_samples
 
-bash scripts/run_text2study_pipeline.sh /path/to/your/ctrlroom_dataset /output_pano_samples
+bash scripts/run_text2study_pipeline.sh /path/to/your/ctrlroom_dataset /output_samples
 
-bash scripts/run_text2kitchen_pipeline.sh /path/to/your/ctrlroom_dataset /output_pano_samples
+bash scripts/run_text2kitchen_pipeline.sh /path/to/your/ctrlroom_dataset /output_samples
 
 ```
+it will gives you the 3D room generations following below architecture:
+* `bedroom`:
+    - text_prompt.txt: the text prompt used for layout generation
+    - samples_1x23x31.npz: sampled Scene Code (3D layout) in numpy format
+    - `0/`: the first bedroom sample
+        - scene_xxxx_xxxx_sem.png: the layout_semantic panorama image
+        - scene_xxxx_xxxx_pano.png: the RGB panorama image generation aligned to the layout
+        - scene_xxxx_xxxx.ply: the reconstructed 3D layout mesh in ply format
+        - model.obj: the textured 3D room mesh in obj format
 
 ## 🦾 Training
 ### 1. Text-to-Layout
